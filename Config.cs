@@ -25,7 +25,6 @@ namespace Diplomka.IdentityServer
             new ApiScope[]
             {
                 new ApiScope("dpapi"),
-
             };
 
         public static IEnumerable<Client> Clients =>
@@ -40,7 +39,7 @@ namespace Diplomka.IdentityServer
                     RequirePkce = true,
                     RedirectUris = { "https://localhost:44001/authentication/login-callback" },
                     PostLogoutRedirectUris = { "https://localhost:44001/authentication/logout-callback" },
-                    AllowedScopes = { "openid", "profile", "email", "dpapi" },
+                    AllowedScopes = { "openid", "profile", "email", "dpapi", "role"},
                     AllowedCorsOrigins = { "https://localhost:44001" }
                 }
             };

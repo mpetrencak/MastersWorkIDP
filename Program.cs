@@ -3,11 +3,14 @@ using Diplomka.IdentityServer;
 using Diplomka.IdentityServer.Data;
 using Diplomka.IdentityServer.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
-builder.Services.AddRazorPages();
+builder.Services.AddMvc();
+
+builder.Services.AddTransient<IEmailSender, DummyEmailSender>();
 
 builder.Services.AddDbContext<IdentityServerDbContext>(options =>
 {
@@ -47,11 +50,16 @@ var app = builder.Build();
 SeedData.EnsureSeedData(app);
 
 app.UseStaticFiles();
+
 app.UseRouting();
-app.UseAuthentication();app.UseIdentityServer();
+app.UseIdentityServer();
 app.UseAuthorization();
 
-app.MapRazorPages()
-    .RequireAuthorization();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+    endpoints.MapDefaultControllerRoute();
+    endpoints.MapRazorPages();
+});
 
 app.Run();
