@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
+Config.ReactUrl = configuration["ReactUrl"];
+Config.WasmUrl = configuration["WasmUrl"];
 builder.Services.AddMvc();
 
 builder.Services.AddTransient<IEmailSender, DummyEmailSender>();
