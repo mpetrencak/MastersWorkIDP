@@ -1,4 +1,3 @@
-
 using Diplomka.IdentityServer;
 using Diplomka.IdentityServer.Data;
 using Diplomka.IdentityServer.Models;
@@ -40,11 +39,7 @@ builder.Services.AddIdentityServer(option =>
     .AddInMemoryApiScopes(Config.ApiScopes)
     .AddInMemoryClients(Config.Clients);
 
-
 builder.Services.AddAuthorization();
-
-
-
 
 var app = builder.Build();
 SeedData.EnsureSeedData(app);

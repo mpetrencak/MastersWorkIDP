@@ -1,8 +1,10 @@
 ﻿using System.Security.Claims;
+using Diplomka.IdentityServer.Data;
 using Diplomka.IdentityServer.Models;
 using IdentityModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace Diplomka.IdentityServer
 {
@@ -12,7 +14,7 @@ namespace Diplomka.IdentityServer
         {
             using (var scope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
             {
-                var context = scope.ServiceProvider.GetService<IdentityDbContext>();
+                var context = scope.ServiceProvider.GetService<IdentityServerDbContext>();
                 //context.Database.Migrate();
 
                 var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
@@ -80,6 +82,39 @@ namespace Diplomka.IdentityServer
                 else
                 {
                     Console.WriteLine("bob already exists");
+                }
+
+                var john = userMgr.FindByNameAsync("john").Result;
+                if (john == null)
+                {
+                    john = new ApplicationUser
+                    {
+                        UserName = "John",
+                        Email = "JohnSmith@email.com",
+                        EmailConfirmed = true
+                    };
+                    var result = userMgr.CreateAsync(john, "Pass123!").Result;
+                    if (!result.Succeeded)
+                    {
+                        throw new Exception(result.Errors.First().Description);
+                    }
+
+                    result = userMgr.AddClaimsAsync(john, new Claim[]{
+                        new Claim(JwtClaimTypes.Name, "John Smith"),
+                        new Claim(JwtClaimTypes.GivenName, "John"),
+                        new Claim(JwtClaimTypes.FamilyName, "Smith"),
+                        new Claim(JwtClaimTypes.Email, "John.Smith@email.com"),
+                        new Claim("role", "mod"),
+                    }).Result;
+                    if (!result.Succeeded)
+                    {
+                        throw new Exception(result.Errors.First().Description);
+                    }
+                    Console.WriteLine("john created");
+                }
+                else
+                {
+                    Console.WriteLine("john already exists");
                 }
             }
         }
